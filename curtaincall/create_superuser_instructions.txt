@@ -1,0 +1,29 @@
+INSTRUCTIONS TO CREATE SUPERUSER:
+
+1. Open a new terminal/command prompt
+2. Navigate to: cd C:\Users\Admin\Desktop\Theater\curtaincall
+3. Run: python manage.py shell
+4. Copy and paste this code:
+
+from curtaincall.users.models import User
+
+email = "tsvete.pete@gmail.com"
+password = "556689tin"
+
+# Check if user exists
+if User.objects.filter(email=email).exists():
+    user = User.objects.get(email=email)
+    user.set_password(password)
+    user.is_staff = True
+    user.is_superuser = True
+    user.save()
+    print(f"✓ Updated {email} to superuser")
+else:
+    user = User.objects.create_superuser(email=email, password=password)
+    print(f"✓ Created superuser: {email}")
+
+print("Done! You can now log in at http://localhost:8000/admin")
+
+5. Press Enter
+6. Exit shell: exit()
+

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Signup</title>
+</head>
+<body>
+  <h1>Регистрация</h1>
+  <form id="signup-form">
+    <label for="email">Имейл:</label>
+    <input type="email" id="email" name="email" required><br><br>
+
+    <label for="password1">Парола:</label>
+    <input type="password" id="password1" name="password1" required><br><br>
+
+    <label for="password2">Повтори паролата:</label>
+    <input type="password" id="password2" name="password2" required><br><br>
+
+    <button type="submit">Създай акаунт</button>
+  </form>
+
+  <div id="message" style="color:red; margin-top:10px;"></div>
+
+  <script>
+    const form = document.getElementById("signup-form");
+    const messageDiv = document.getElementById("message");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      messageDiv.textContent = ""; // чистим предишни съобщения
+
+      const data = {
+        email: form.email.value,
+        password1: form.password1.value,
+        password2: form.password2.value
+      };
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/auth/app/signup/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          // Успешна регистрация
+          messageDiv.style.color = "green";
+          messageDiv.textContent = "Регистрацията е успешна! Вече можете да се логнете.";
+          form.reset();
+        } else {
+          // Грешки от бекенда
+          messageDiv.style.color = "red";
+          // result може да съдържа { "email": ["..."], "password1": ["..."] }
+          const errors = Object.entries(result).map(([field, msgs]) => `${field}: ${msgs.join(", ")}`);
+          messageDiv.textContent = errors.join("\n");
+        }
+      } catch (err) {
+        messageDiv.style.color = "red";
+        messageDiv.textContent = "Възникна грешка. Опитайте отново.";
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>
