@@ -53,8 +53,8 @@ HEADLESS_ONLY = True
 CORS_ALLOW_ALL_ORIGINS = False 
 
 HEADLESS_FRONTEND_URLS = {
-    "login": "http://127.0.0.1:8000/api/auth/login",
-    "register": "http://127.0.0.1:8000/api/auth/register",
+    "login": "http://127.0.0.1:8000/api/login",
+    "register": "http://127.0.0.1:8000/api/register",
     'account_confirm_email': 'http://127.0.0.1:8000/api/auth/confirm-email/{key}/'
 }
 
@@ -70,14 +70,12 @@ DJANGO_APPS = [
 ]
 THIRD_PARTY_APPS = [
     "crispy_forms",
-    "crispy_bootstrap5",
     "allauth",
     "allauth.account",
     "allauth.mfa",
     "allauth.socialaccount",
     "allauth.headless",
     "rest_framework",
-    "corsheaders",
     "drf_spectacular",
 ]
 
