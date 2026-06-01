@@ -26,7 +26,7 @@ urlpatterns = [
     # ---------
 
     # HEADLESS API
-    path("auth/", include("allauth.headless.urls")),  # включва /auth/register/ и /auth/login/
+    path("pages/", include("allauth.headless.urls")),  # включва /auth/register/ и /auth/login/
 
     path("api/", include("theatres.urls")),
 

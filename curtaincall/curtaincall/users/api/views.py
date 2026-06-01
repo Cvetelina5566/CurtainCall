@@ -39,13 +39,13 @@ def register_user(request):
 
 
 @csrf_exempt
-def login_user(request):
+def _user(request):
     if request.method != "POST":
         return JsonResponse({"detail": "Method not allowed"}, status=405)
 
     try:
         data = json.loads(request.body)
-        email = data.get("email") or data.get("login")
+        email = data.get("email") or data.get("")
         password = data.get("password")
     except Exception:
         return JsonResponse({"detail": "Invalid JSON"}, status=400)
@@ -68,7 +68,7 @@ def login_user(request):
         return JsonResponse({"detail": "Method not allowed"}, status=405)
 
     data = json.loads(request.body)
-    email = data.get("email") or data.get("login")
+    email = data.get("email") or data.get("")
     password = data.get("password")
 
     user = authenticate(request, email=email, password=password)
