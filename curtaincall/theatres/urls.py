@@ -92,6 +92,31 @@ def temporary_create_play(request):
             print("!!! КРИТИЧНА ГРЕШКА В ТЕРМИНАЛА !!!:", str(e))
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def latest_plays(request):
+    try:
+        # Взимаме последните 3 записа, сортирани по ID в обратен ред (-id)
+        latest_perf = Performance.objects.order_by('-id')[:3]
+        data = []
+        
+        for p in latest_perf:
+            title = p.play.title if (hasattr(p, 'play') and p.play) else getattr(p, 'title', 'Неозаглавено')
+            description = p.play.description if (hasattr(p, 'play') and p.play and hasattr(p.play, 'description')) else getattr(p, 'description', '')
+            
+            data.append({
+                "id": p.id,
+                "title": title,
+                "description": description,
+                "date": str(p.date) if hasattr(p, 'date') else "",
+                "time": str(p.time) if hasattr(p, 'time') else "19:00:00",
+                "price": float(p.price) if hasattr(p, 'price') else 0.0
+            })
+        return Response(data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 urlpatterns = [
     path('plays/', temporary_create_play, name='create_play'),
+    path('plays/latest/', latest_plays),
 ]
