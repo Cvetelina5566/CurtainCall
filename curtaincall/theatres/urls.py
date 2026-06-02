@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
-from .models import Performance, Hall, Theatre, Play 
+from .models import Performance, Hall, Theatre, Play, Ticket
 
 @api_view(['GET','POST'])
 @permission_classes([AllowAny])
@@ -96,7 +96,7 @@ def temporary_create_play(request):
 @permission_classes([AllowAny])
 def latest_plays(request):
     try:
-        # Взимаме последните 3 записа, сортирани по ID в обратен ред (-id)
+
         latest_perf = Performance.objects.order_by('-id')[:3]
         data = []
         
@@ -116,7 +116,57 @@ def latest_plays(request):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@api_view(['POST'])
+@permission_classes([AllowAny]) 
+def buy_ticket(request):
+    try:
+        performance_id = request.data.get('performance_id')
+        quantity = request.data.get('quantity', 1)
+
+        try:
+            quantity = int(quantity)
+        except:
+            quantity = 1
+
+
+        try:
+            performance = Performance.objects.get(id=performance_id)
+        except Performance.DoesNotExist:
+            return Response({"error": "Представлението не е намерено."}, status=status.HTTP_404_NOT_FOUND)
+
+
+        ticket = Ticket()
+        ticket.performance = performance
+        
+
+        if hasattr(ticket, 'quantity'): 
+            ticket.quantity = quantity
+        elif hasattr(ticket, 'seats_count'):
+            ticket.seats_count = quantity
+
+
+        if hasattr(ticket, 'user'):
+            from django.contrib.auth.models import User
+      
+            ticket.user = User.objects.first() 
+
+        if hasattr(ticket, 'price'):
+            perf_price = float(performance.price) if hasattr(performance, 'price') else 0.0
+            ticket.price = perf_price * quantity 
+
+        ticket.save()
+
+        return Response({
+            "success": True,
+            "message": f"Успешно закупихте {quantity} билет(и) за '{performance.play.title if performance.play else 'представлението'}'!"
+        }, status=status.HTTP_201_CREATED)
+
+    except Exception as e:
+        print("!!! ГРЕШКА ПРИ ПОКУПКА НА БИЛЕТ !!!:", str(e))
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 urlpatterns = [
     path('plays/', temporary_create_play, name='create_play'),
     path('plays/latest/', latest_plays),
+    path('buy-ticket/', buy_ticket, name='buy_ticket'),
 ]
