@@ -76,6 +76,7 @@ THIRD_PARTY_APPS = [
     "allauth.socialaccount",
     "allauth.headless",
     "rest_framework",
+    "rest_framework.authtoken",
     "drf_spectacular",
 ]
 

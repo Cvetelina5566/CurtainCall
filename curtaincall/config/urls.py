@@ -25,8 +25,9 @@ urlpatterns = [
     # HEADLESS API
     path("pages/", include("allauth.headless.urls")),  
 
+    # path("api/", include("plays.urls")),
     path("api/", include("theatres.urls")),
-
+    
     path("api/jwt/create/", TokenObtainPairView.as_view(), name="jwt-create"),
     path("api/jwt/refresh/", TokenRefreshView.as_view(), name="jwt-refresh"),
 
