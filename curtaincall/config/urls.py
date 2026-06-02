@@ -21,12 +21,9 @@ urlpatterns = [
 
     path("admin/", admin.site.urls),
 
-    # ADD THIS ↓↓↓↓↓
-    # path("auth/", include("allauth.urls")),
-    # ---------
 
     # HEADLESS API
-    path("pages/", include("allauth.headless.urls")),  # включва /auth/register/ и /auth/login/
+    path("pages/", include("allauth.headless.urls")),  
 
     path("api/", include("theatres.urls")),
 
@@ -41,5 +38,4 @@ urlpatterns = [
     path("api/", include("config.api_router")),
 ]
 
-# Static/Media (ако има)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
